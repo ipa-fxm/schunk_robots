@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="paused" default="false"/>
+  <arg name="paused" default="true"/>
   <arg name="gui" default="true"/>
 
   <!-- start gazebo with empty world -->
@@ -26,8 +26,7 @@
   <node pkg="rostopic" type="rostopic" name="fake_joint_calibration" args="pub /calibrated std_msgs/Bool true" />
   <node ns="arm" name="gazebo_services" pkg="cob_controller_configuration_gazebo" type="gazebo_services.py"  cwd="node" respawn="false" output="screen"/>
   
-  
-  
+
   <!-- controllers -->
   <rosparam ns="arm" command="load" file="$(find schunk_lwa4p_extended)/config/arm_controller.yaml" />
   <rosparam ns="arm" command="load" file="$(find schunk_lwa4p_extended)/config/joint_limits.yaml"/>
@@ -43,9 +42,12 @@
   <!-- Cartesian stuff -->
   <node ns="arm" name="twist_controller" pkg="cob_twist_controller" type="cob_twist_controller_node" cwd="node" respawn="false" output="screen"/>
   <node ns="arm" name="frame_tracker" pkg="cob_frame_tracker" type="cob_frame_tracker_node" cwd="node" respawn="false" output="screen"/>
-  <node ns="arm" name="interactive_target" pkg="cob_frame_tracker" type="interactive_frame_target_node" cwd="node" respawn="false" output="screen"/>
-  
-  
+  <node ns="arm" name="interactive_target" pkg="cob_frame_tracker" type="interactive_frame_target.py" cwd="node" respawn="false" output="screen"/>
+  <node ns="arm" name="output_publisher" pkg="cob_twist_controller" type="output_publisher_node" cwd="node" respawn="false" output="screen"/>
+  <node ns="arm" name="debug_publisher" pkg="cob_twist_controller" type="cob_twist_controller_debug_node" cwd="node" respawn="false" output="log"/>
+<!--
+  <node ns="arm" name="test_publisher" pkg="cob_twist_controller" type="test_publisher_twist_series.py" cwd="node" respawn="false" output="log"/>
+-->
   
   <!-- start diagnostics -->
   <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator" >
